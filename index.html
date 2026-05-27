@@ -3,410 +3,470 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RSA Playground · 소수가 지키는 비밀</title>
+<title>소수가 지키는 비밀 · RSA 학습</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Pretendard:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f5f1e8;
-  --bg-2:#fbf8f1;
-  --bg-3:#ede7d8;
-  --line:#d9d2c0;
-  --line-2:#b8ad94;
-  --text:#1a1814;
-  --text-2:#5a564c;
-  --text-3:#8a8576;
-  --mint:#0d7d6a;
-  --mint-soft:#0d7d6a1a;
-  --amber:#b45309;
-  --amber-soft:#b453091a;
-  --danger:#a8331f;
-  --grid:rgba(26,24,20,0.045);
+  --bg:#f7f5f0;
+  --bg-2:#fbfaf6;
+  --bg-3:#ece9e0;
+  --line:#d8d4c8;
+  --line-2:#b6b1a3;
+  --ink:#1c1b18;
+  --ink-2:#56544c;
+  --ink-3:#8d8a7e;
+  --accent:#1c1b18;
+  --hit:#2d2b27;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  font-family:'IBM Plex Sans KR','Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-family:'Pretendard','Apple SD Gothic Neo',-apple-system,sans-serif;
   background:var(--bg);
-  color:var(--text);
+  color:var(--ink);
   font-weight:400;
-  line-height:1.6;
-  letter-spacing:-0.005em;
-  min-height:100vh;
+  line-height:1.65;
+  letter-spacing:-0.01em;
 }
-.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"calt" 1, "ss01" 1}
-.serif{font-family:'Fraunces',Georgia,serif;font-variation-settings:"SOFT" 100,"WONK" 0}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.serif{font-family:'Noto Serif KR',serif}
+
+.wrap{max-width:880px;margin:0 auto;padding:48px 28px 80px}
 
 /* ===== Header ===== */
-.wrap{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 header{
-  display:flex;align-items:flex-end;justify-content:space-between;
-  padding-bottom:28px;border-bottom:1px solid var(--line);
-  flex-wrap:wrap;gap:16px;
+  padding-bottom:32px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:8px;
 }
-.brand{display:flex;align-items:center;gap:14px}
-.dot{
-  width:10px;height:10px;border-radius:50%;
-  background:var(--mint);
-  animation:pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
 .title{
-  font-family:'Fraunces',serif;font-weight:400;
-  font-size:clamp(28px,4vw,42px);line-height:1;
-  font-variation-settings:"SOFT" 100,"WONK" 1;
-  letter-spacing:-0.03em;
+  font-family:'Noto Serif KR',serif;font-weight:500;
+  font-size:clamp(30px,4.5vw,40px);
+  line-height:1.2;letter-spacing:-0.02em;
 }
-.title em{font-style:italic;color:var(--mint);font-variation-settings:"SOFT" 100,"WONK" 1}
 .subtitle{
-  font-family:'JetBrains Mono',monospace;
-  color:var(--text-3);font-size:12px;letter-spacing:0.08em;
-  text-transform:uppercase;margin-top:6px;
+  font-size:13px;color:var(--ink-3);
+  margin-top:10px;letter-spacing:0.02em;
 }
-.meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);text-align:right;line-height:1.7}
-.meta span{color:var(--mint)}
 
 /* ===== Tabs ===== */
 nav.tabs{
-  display:flex;gap:0;margin-top:28px;
-  border-bottom:1px solid var(--line);overflow-x:auto;
-  scrollbar-width:none;
+  display:flex;gap:0;margin-top:32px;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto;scrollbar-width:none;
 }
 nav.tabs::-webkit-scrollbar{display:none}
 .tab{
-  background:none;border:none;color:var(--text-2);
-  font-family:'JetBrains Mono',monospace;font-size:13px;
-  padding:14px 20px;cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:all 0.2s;white-space:nowrap;
-  letter-spacing:0.02em;
+  background:none;border:none;color:var(--ink-3);
+  font-family:inherit;font-size:14px;font-weight:500;
+  padding:14px 18px;cursor:pointer;
+  border-bottom:1.5px solid transparent;
+  transition:color 0.2s,border-color 0.2s;
+  white-space:nowrap;
 }
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--mint);border-bottom-color:var(--mint)}
-.tab .num{color:var(--text-3);margin-right:8px}
-.tab.active .num{color:var(--mint)}
+.tab:hover{color:var(--ink-2)}
+.tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+.tab .num{
+  color:var(--ink-3);margin-right:8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+}
+.tab.active .num{color:var(--ink-2)}
 
 /* ===== Panels ===== */
-.panel{display:none;padding-top:36px;animation:fadeUp 0.5s ease}
-.panel.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.panel{display:none;padding-top:36px}
+.panel.active{display:block;animation:fadeUp 0.35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ===== Step Card ===== */
 .step{
-  background:var(--bg-2);border:1px solid var(--line);
-  border-radius:4px;padding:24px 28px;margin-bottom:20px;
-  position:relative;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:24px 28px;margin-bottom:16px;
 }
-.step::before{
-  content:"";position:absolute;left:-1px;top:24px;bottom:24px;
-  width:2px;background:var(--line-2);
+.step-header{
+  display:flex;align-items:baseline;gap:14px;
+  margin-bottom:14px;flex-wrap:wrap;
 }
-.step.done::before{background:var(--mint)}
-.step.active::before{background:var(--mint);width:3px;left:-2px}
-.step-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .step-num{
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);letter-spacing:0.1em;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--ink-3);letter-spacing:0.04em;
 }
 .step-title{
-  font-family:'Fraunces',serif;font-weight:400;
-  font-size:22px;letter-spacing:-0.02em;
+  font-family:'Noto Serif KR',serif;font-weight:500;
+  font-size:20px;letter-spacing:-0.02em;
 }
-.step-desc{color:var(--text-2);font-size:14px;margin-bottom:18px;max-width:680px}
+.step-desc{
+  color:var(--ink-2);font-size:14px;
+  margin-bottom:18px;max-width:640px;
+}
 
 /* ===== Inputs/Buttons ===== */
-.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.row{
+  display:flex;gap:12px;flex-wrap:wrap;
+  align-items:flex-end;margin-bottom:14px;
+}
 label.field{
   display:flex;flex-direction:column;gap:6px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;
+  font-size:12px;color:var(--ink-3);
 }
-input.txt,select.txt{
-  background:var(--bg);color:var(--text);
-  border:1px solid var(--line-2);border-radius:3px;
-  padding:10px 14px;font-family:'JetBrains Mono',monospace;
-  font-size:14px;min-width:140px;
-  transition:border 0.2s;
+input.txt{
+  background:var(--bg);color:var(--ink);
+  border:1px solid var(--line-2);border-radius:2px;
+  padding:9px 12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;min-width:120px;
+  transition:border-color 0.15s;
 }
-input.txt:focus,select.txt:focus{outline:none;border-color:var(--mint)}
-input.txt.amber:focus{border-color:var(--amber)}
+input.txt:focus{outline:none;border-color:var(--ink)}
 
 button.btn{
-  background:transparent;color:var(--mint);
-  border:1px solid var(--mint);border-radius:3px;
-  padding:9px 18px;font-family:'JetBrains Mono',monospace;
-  font-size:12px;cursor:pointer;
-  letter-spacing:0.08em;text-transform:uppercase;
-  transition:all 0.2s;
+  background:transparent;color:var(--ink);
+  border:1px solid var(--ink);border-radius:2px;
+  padding:9px 16px;font-family:inherit;
+  font-size:13px;cursor:pointer;
+  transition:background 0.15s,color 0.15s;
 }
-button.btn:hover{background:var(--mint-soft)}
-button.btn.amber{color:var(--amber);border-color:var(--amber)}
-button.btn.amber:hover{background:var(--amber-soft)}
-button.btn.ghost{color:var(--text-2);border-color:var(--line-2)}
-button.btn.ghost:hover{border-color:var(--text-2);background:transparent;color:var(--text)}
-button.btn:disabled{opacity:0.3;cursor:not-allowed}
+button.btn:hover{background:var(--ink);color:var(--bg-2)}
+button.btn.ghost{
+  border-color:var(--line-2);color:var(--ink-2);
+}
+button.btn.ghost:hover{
+  border-color:var(--ink-2);background:transparent;color:var(--ink);
+}
+button.btn.fill{
+  background:var(--ink);color:var(--bg-2);
+}
+button.btn.fill:hover{background:#000;color:var(--bg)}
+button.btn:disabled{opacity:0.35;cursor:not-allowed}
 
 .chip{
-  display:inline-block;padding:4px 10px;
-  background:var(--bg-3);border:1px solid var(--line-2);
-  border-radius:2px;font-family:'JetBrains Mono',monospace;
-  font-size:11px;color:var(--text-2);cursor:pointer;
-  transition:all 0.15s;
+  display:inline-block;padding:5px 10px;
+  background:transparent;border:1px solid var(--line-2);
+  border-radius:2px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--ink-2);cursor:pointer;
+  transition:border-color 0.15s,color 0.15s;
+  margin-right:4px;
 }
-.chip:hover{border-color:var(--mint);color:var(--mint)}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
 
 /* ===== Output blocks ===== */
 .out{
   background:var(--bg);border:1px solid var(--line);
-  border-radius:3px;padding:16px 18px;
+  border-radius:2px;padding:16px 18px;
   font-family:'JetBrains Mono',monospace;font-size:13px;
-  color:var(--text);overflow-x:auto;
+  color:var(--ink);overflow-x:auto;
   white-space:pre-wrap;word-break:break-all;
-  line-height:1.7;
+  line-height:1.8;
 }
-.out .k{color:var(--text-3)}
-.out .v{color:var(--mint)}
-.out .v.amber{color:var(--amber)}
-.out .op{color:var(--text-3)}
-.out .num{color:var(--text)}
+.out .k{color:var(--ink-3)}
+.out .v{color:var(--ink);font-weight:500}
 
 .formula{
-  font-family:'JetBrains Mono',monospace;font-size:13px;
-  color:var(--text-2);background:var(--bg-3);
-  padding:10px 14px;border-left:2px solid var(--line-2);
-  border-radius:0 2px 2px 0;margin:10px 0;
+  font-family:'JetBrains Mono',monospace;font-size:14px;
+  color:var(--ink-2);
+  background:var(--bg);
+  padding:12px 16px;
+  border-left:2px solid var(--line-2);
+  margin:10px 0;
 }
-.formula b{color:var(--mint);font-weight:500}
-.formula b.amber{color:var(--amber)}
+.formula b{color:var(--ink);font-weight:500}
 
 /* ===== Keys display ===== */
-.keys{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
-@media (max-width:680px){.keys{grid-template-columns:1fr}}
+.keys{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;margin-top:16px;
+}
+@media (max-width:640px){.keys{grid-template-columns:1fr}}
 .key-card{
-  border:1px solid var(--line-2);border-radius:3px;
-  padding:16px 18px;position:relative;
+  border:1px solid var(--line-2);border-radius:2px;
+  padding:16px 18px;background:var(--bg);
 }
-.key-card.public{border-color:var(--mint);background:linear-gradient(180deg,var(--mint-soft) 0%,transparent 60%)}
-.key-card.private{border-color:var(--amber);background:linear-gradient(180deg,var(--amber-soft) 0%,transparent 60%)}
+.key-card.private{
+  border-style:dashed;
+}
 .key-label{
-  font-family:'JetBrains Mono',monospace;font-size:10px;
-  letter-spacing:0.12em;text-transform:uppercase;
-  margin-bottom:8px;
+  font-size:11px;
+  color:var(--ink-3);
+  margin-bottom:8px;letter-spacing:0.04em;
 }
-.key-card.public .key-label{color:var(--mint)}
-.key-card.private .key-label{color:var(--amber)}
-.key-val{font-family:'JetBrains Mono',monospace;font-size:13px;word-break:break-all}
+.key-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;word-break:break-all;color:var(--ink);
+}
 
-/* ===== Challenge mode ===== */
-.challenge-head{
-  display:flex;gap:24px;flex-wrap:wrap;
-  padding:20px 24px;background:var(--bg-2);
-  border:1px solid var(--line);border-radius:4px;
+/* ===== Factor game ===== */
+.game-head{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--bg-2);
   margin-bottom:20px;
 }
-.stat{display:flex;flex-direction:column;gap:4px}
-.stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:0.1em;text-transform:uppercase}
-.stat-val{font-family:'Fraunces',serif;font-size:28px;color:var(--text);letter-spacing:-0.02em}
-.stat-val.mint{color:var(--mint)}
-.stat-val.amber{color:var(--amber)}
-.stat-val.danger{color:var(--danger)}
-
-.diff-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.diff{
-  padding:10px 18px;background:var(--bg-2);
-  border:1px solid var(--line-2);border-radius:3px;
-  cursor:pointer;transition:all 0.2s;
-  font-family:'JetBrains Mono',monospace;font-size:12px;
-  color:var(--text-2);
+.stat{
+  padding:18px 22px;
+  border-right:1px solid var(--line);
 }
-.diff:hover{color:var(--text);border-color:var(--text-2)}
-.diff.active{border-color:var(--mint);color:var(--mint);background:var(--mint-soft)}
-.diff small{display:block;color:var(--text-3);font-size:10px;margin-top:2px;letter-spacing:0.06em}
-.diff.active small{color:var(--mint)}
+.stat:last-child{border-right:none}
+@media (max-width:560px){
+  .stat{border-right:none;border-bottom:1px solid var(--line)}
+  .stat:last-child{border-bottom:none}
+}
+.stat-label{
+  font-size:11px;color:var(--ink-3);
+  margin-bottom:6px;letter-spacing:0.04em;
+}
+.stat-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:22px;color:var(--ink);
+  font-weight:500;letter-spacing:-0.01em;
+}
+
+.diff-picker{
+  display:flex;gap:0;margin-bottom:20px;
+  border:1px solid var(--line);border-radius:2px;
+  overflow:hidden;
+  background:var(--bg-2);
+}
+.diff{
+  flex:1;padding:12px 16px;
+  cursor:pointer;
+  font-size:13px;color:var(--ink-2);
+  text-align:center;
+  border-right:1px solid var(--line);
+  transition:background 0.15s,color 0.15s;
+}
+.diff:last-child{border-right:none}
+.diff:hover{background:var(--bg-3)}
+.diff.active{
+  background:var(--ink);color:var(--bg-2);
+}
+.diff small{
+  display:block;font-size:11px;
+  margin-top:2px;opacity:0.7;
+}
 
 .target-display{
-  text-align:center;padding:40px 20px;
-  background:var(--bg-2);border:1px solid var(--line);
-  border-radius:4px;margin-bottom:20px;
+  text-align:center;
+  padding:48px 20px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:2px;
+  margin-bottom:20px;
 }
 .target-label{
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);letter-spacing:0.12em;text-transform:uppercase;
-  margin-bottom:14px;
+  font-size:12px;color:var(--ink-3);
+  margin-bottom:18px;letter-spacing:0.04em;
 }
 .target-num{
-  font-family:'Fraunces',serif;font-weight:300;
-  font-size:clamp(48px,8vw,84px);letter-spacing:-0.03em;
-  color:var(--mint);line-height:1;
+  font-family:'Noto Serif KR',serif;
+  font-weight:400;
+  font-size:clamp(54px,9vw,84px);
+  letter-spacing:-0.03em;line-height:1;
+  color:var(--ink);
 }
 .target-formula{
-  font-family:'JetBrains Mono',monospace;font-size:14px;
-  color:var(--text-3);margin-top:14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;color:var(--ink-3);
+  margin-top:18px;
 }
 
 .factor-input{
-  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
-  margin-bottom:14px;
+  display:flex;gap:8px;
+  justify-content:center;align-items:center;
+  flex-wrap:wrap;margin-bottom:14px;
 }
 .factor-input input{
-  font-size:24px;padding:12px 16px;text-align:center;
-  width:140px;font-family:'JetBrains Mono',monospace;
+  font-size:22px;padding:14px 16px;
+  text-align:center;width:140px;
+  font-family:'JetBrains Mono',monospace;
+  font-weight:500;
 }
+.factor-input .x{
+  font-family:'Noto Serif KR',serif;
+  font-size:20px;color:var(--ink-3);
+}
+
 .feedback{
-  text-align:center;font-family:'JetBrains Mono',monospace;
-  font-size:13px;min-height:20px;margin-top:8px;
+  text-align:center;
+  font-size:13px;min-height:22px;
+  margin-top:10px;color:var(--ink-2);
 }
-.feedback.ok{color:var(--mint)}
-.feedback.bad{color:var(--danger)}
-.feedback.hint{color:var(--amber)}
+.feedback.ok{color:var(--ink);font-weight:500}
+.feedback.bad{color:var(--ink-2)}
+.feedback.hint{color:var(--ink-2);font-style:italic}
 
 .log-list{
-  background:var(--bg-2);border:1px solid var(--line);
-  border-radius:4px;padding:0;margin-top:20px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:2px;margin-top:24px;
 }
 .log-list h4{
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);letter-spacing:0.1em;text-transform:uppercase;
-  padding:14px 18px;border-bottom:1px solid var(--line);
-  font-weight:400;
+  font-size:12px;color:var(--ink-3);
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  font-weight:500;letter-spacing:0.04em;
 }
 .log-item{
-  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
-  padding:10px 18px;border-bottom:1px solid var(--line);
-  font-family:'JetBrains Mono',monospace;font-size:12px;
+  display:grid;
+  grid-template-columns:1.2fr 1.2fr 1fr 0.7fr;
+  padding:11px 18px;
+  border-bottom:1px solid var(--line);
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  align-items:center;
 }
 .log-item:last-child{border-bottom:none}
-.log-item .col{color:var(--text-2)}
-.log-item .col.success{color:var(--mint)}
-.log-item .col.fail{color:var(--danger)}
-.log-empty{padding:24px;text-align:center;color:var(--text-3);font-family:'JetBrains Mono',monospace;font-size:12px}
+.log-item .col{color:var(--ink-2)}
+.log-item .col.success{color:var(--ink);font-weight:500}
+.log-item .col.fail{color:var(--ink-3);text-decoration:line-through}
+.log-empty{
+  padding:28px 18px;text-align:center;
+  color:var(--ink-3);font-size:13px;
+}
 
 /* ===== Data viz ===== */
 .bench-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;margin-bottom:28px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:0;margin-bottom:24px;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--bg-2);
 }
 .bench-card{
-  background:var(--bg-2);border:1px solid var(--line);
-  border-radius:4px;padding:20px 22px;
+  padding:22px 24px;
+  border-right:1px solid var(--line);
+}
+.bench-card:last-child{border-right:none}
+@media (max-width:680px){
+  .bench-card{border-right:none;border-bottom:1px solid var(--line)}
+  .bench-card:last-child{border-bottom:none}
 }
 .bench-num{
-  font-family:'Fraunces',serif;font-size:36px;
-  color:var(--mint);letter-spacing:-0.02em;line-height:1;
+  font-family:'Noto Serif KR',serif;
+  font-size:30px;color:var(--ink);
+  letter-spacing:-0.02em;
+  font-weight:400;
 }
-.bench-card .bench-num.amber{color:var(--amber)}
 .bench-label{
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;
-  margin-top:10px;
+  font-size:12px;color:var(--ink-3);
+  margin-top:8px;
 }
-.bench-desc{color:var(--text-2);font-size:13px;margin-top:8px}
+.bench-desc{
+  color:var(--ink-2);font-size:13px;
+  margin-top:8px;line-height:1.55;
+}
 
 .chart-wrap{
-  background:var(--bg-2);border:1px solid var(--line);
-  border-radius:4px;padding:24px;margin-bottom:20px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:24px;margin-bottom:20px;
 }
 .chart-title{
-  font-family:'Fraunces',serif;font-size:20px;
+  font-family:'Noto Serif KR',serif;
+  font-weight:500;font-size:18px;
   margin-bottom:6px;letter-spacing:-0.02em;
 }
 .chart-sub{
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);margin-bottom:24px;letter-spacing:0.06em;
+  font-size:12px;color:var(--ink-3);
+  margin-bottom:20px;
 }
-#chart{width:100%;height:340px}
+#chart{width:100%;height:320px}
 
 table.compare{
   width:100%;border-collapse:collapse;
-  font-family:'JetBrains Mono',monospace;font-size:13px;
-  background:var(--bg-2);border:1px solid var(--line);
+  font-size:13px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
 }
 table.compare th,table.compare td{
   padding:12px 16px;text-align:left;
   border-bottom:1px solid var(--line);
 }
 table.compare th{
-  font-weight:500;color:var(--text-3);font-size:11px;
-  letter-spacing:0.08em;text-transform:uppercase;
+  font-weight:500;color:var(--ink-3);
+  font-size:12px;
   background:var(--bg-3);
 }
-table.compare td.mint{color:var(--mint)}
-table.compare td.amber{color:var(--amber)}
-table.compare td.danger{color:var(--danger)}
+table.compare td.mono{
+  font-family:'JetBrains Mono',monospace;
+}
+table.compare tr:last-child td{border-bottom:none}
 
 /* ===== Quantum panel ===== */
-.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
-@media (max-width:780px){.q-grid{grid-template-columns:1fr}}
+.q-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;margin-top:20px;
+}
+@media (max-width:720px){.q-grid{grid-template-columns:1fr}}
 .q-card{
-  background:var(--bg-2);border:1px solid var(--line);
-  padding:24px 26px;border-radius:4px;position:relative;overflow:hidden;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  padding:22px 24px;border-radius:2px;
 }
 .q-card h3{
-  font-family:'Fraunces',serif;font-weight:400;
-  font-size:24px;letter-spacing:-0.02em;margin-bottom:14px;
+  font-family:'Noto Serif KR',serif;
+  font-weight:500;
+  font-size:18px;
+  letter-spacing:-0.02em;
+  margin-bottom:14px;
 }
-.q-card p{color:var(--text-2);font-size:14px;margin-bottom:12px}
+.q-card p{
+  color:var(--ink-2);font-size:14px;
+  margin-bottom:10px;
+}
 .q-card .tag{
   display:inline-block;padding:3px 8px;
-  font-family:'JetBrains Mono',monospace;font-size:10px;
-  letter-spacing:0.1em;text-transform:uppercase;
-  border-radius:2px;margin-right:6px;margin-bottom:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  background:var(--bg-3);color:var(--ink-2);
+  border-radius:2px;margin-right:4px;margin-bottom:6px;
 }
-.tag.mint{background:var(--mint-soft);color:var(--mint)}
-.tag.amber{background:var(--amber-soft);color:var(--amber)}
-.tag.danger{background:rgba(248,113,113,0.15);color:var(--danger)}
-
-footer{
-  margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
-}
-footer span{color:var(--text-2)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <div>
-    <div class="brand">
-      <div class="subtitle">RSA · Public-Key Cryptography</div>
-    </div>
-    <h1 class="title">소수가 지키는 <em>비밀</em></h1>
-  </div>
-  <div class="meta">
-    <div>MODE <span id="modeIndicator">LEARN</span></div>
-  </div>
+  <h1 class="title">소수가 지키는 비밀</h1>
+  <div class="subtitle">두 소수의 곱으로 잠그고, 그 곱을 다시 풀 수 없게 만드는 암호</div>
 </header>
 
 <nav class="tabs">
-  <button class="tab active" data-tab="learn"><span class="num">01</span>학습 모드</button>
-  <button class="tab" data-tab="challenge"><span class="num">02</span>도전 모드</button>
-  <button class="tab" data-tab="data"><span class="num">03</span>데이터 비교</button>
+  <button class="tab active" data-tab="learn"><span class="num">01</span>학습</button>
+  <button class="tab" data-tab="factor"><span class="num">02</span>소인수분해</button>
+  <button class="tab" data-tab="data"><span class="num">03</span>비교</button>
   <button class="tab" data-tab="quantum"><span class="num">04</span>양자 컴퓨터</button>
 </nav>
 
 <!-- ============== LEARN ============== -->
 <section class="panel active" id="learn">
 
-  <div class="step active">
+  <div class="step">
     <div class="step-header">
-      <div class="step-num">STEP 01</div>
-      <div class="step-title">두 소수를 선택한다</div>
+      <div class="step-num">단계 1</div>
+      <div class="step-title">두 소수를 고른다</div>
     </div>
-    <div class="step-desc">RSA는 두 소수 <span class="mono">p, q</span>의 곱 <span class="mono">N = p·q</span>를 만든다. 너무 작으면 안전하지 않고, 너무 크면 한눈에 보기 어렵다. 학습용으로 두 자리 소수를 골라본다.</div>
+    <div class="step-desc">RSA는 두 소수 <span class="mono">p, q</span>의 곱 <span class="mono">N = p · q</span>를 만드는 것에서 시작한다. 너무 작으면 안전하지 않고, 너무 크면 한눈에 보기 어렵다. 학습용으로 두 자리 소수를 골라 본다.</div>
     <div class="row">
-      <label class="field">P (첫 번째 소수)
+      <label class="field">p (첫 번째 소수)
         <input type="text" class="txt mono" id="p" value="61">
       </label>
-      <label class="field">Q (두 번째 소수)
+      <label class="field">q (두 번째 소수)
         <input type="text" class="txt mono" id="q" value="53">
       </label>
-      <button class="btn ghost" id="randomPrimes">↻ 무작위 추천</button>
+      <button class="btn ghost" id="randomPrimes">무작위 추천</button>
     </div>
-    <div style="margin-top:10px">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);margin-right:10px">PRESET</span>
+    <div style="margin-top:12px">
+      <span style="font-size:12px;color:var(--ink-3);margin-right:8px">예시</span>
       <span class="chip" data-pq="11,13">11, 13</span>
       <span class="chip" data-pq="61,53">61, 53</span>
       <span class="chip" data-pq="101,103">101, 103</span>
@@ -416,106 +476,108 @@ footer span{color:var(--text-2)}
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num">STEP 02</div>
-      <div class="step-title">N과 φ(N)을 계산한다</div>
+      <div class="step-num">단계 2</div>
+      <div class="step-title">두 소수를 곱해 N을 만든다</div>
     </div>
-    <div class="step-desc">공개키와 개인키가 공유할 모듈러스 <span class="mono">N</span>, 그리고 키 생성에 쓰일 오일러 토션트 함수 값 <span class="mono">φ(N)</span>을 구한다.</div>
+    <div class="step-desc">N은 공개해도 되는 자물쇠 번호다. 다른 사람이 N을 보더라도 <span class="mono">p</span>와 <span class="mono">q</span>로 다시 쪼개기 어렵다는 점이 RSA의 핵심이다.</div>
     <div class="formula">N = p × q = <b id="N_formula">61 × 53 = 3233</b></div>
-    <div class="formula">φ(N) = (p−1)(q−1) = <b id="phi_formula">60 × 52 = 3120</b></div>
   </div>
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num">STEP 03</div>
+      <div class="step-num">단계 3</div>
       <div class="step-title">공개키와 개인키를 만든다</div>
     </div>
-    <div class="step-desc"><span class="mono">e</span>는 <span class="mono">1 &lt; e &lt; φ(N)</span> 이면서 <span class="mono">gcd(e, φ(N)) = 1</span>인 값. 보통 <span class="mono">65537</span>을 쓰지만 학습용이라 작게. <span class="mono">d</span>는 <span class="mono">e·d ≡ 1 (mod φ(N))</span>을 만족하는 값으로 확장 유클리드 알고리즘으로 자동 계산된다.</div>
+    <div class="step-desc">공개키는 모두에게 알려 주는 자물쇠, 개인키는 자기만 가지는 열쇠다. 둘 다 N과 짝을 이루어 사용된다. 자세한 계산은 컴퓨터가 알아서 해 주니 결과만 보면 된다.</div>
     <div class="row">
-      <label class="field">E (공개 지수)
-        <input type="text" class="txt mono" id="e" value="17">
-      </label>
-      <button class="btn" id="autoE">⚡ E 자동 추천</button>
-      <button class="btn amber" id="genKeys">🔑 키 생성</button>
+      <button class="btn fill" id="genKeys">키 만들기</button>
     </div>
     <div class="keys" id="keysBox" style="display:none">
-      <div class="key-card public">
-        <div class="key-label">공개키 · PUBLIC KEY</div>
-        <div class="key-val">(e, N) = (<span id="pub_e">17</span>, <span id="pub_N">3233</span>)</div>
+      <div class="key-card">
+        <div class="key-label">공개키 (자물쇠)</div>
+        <div class="key-val">(e, N) = (<span id="pub_e">—</span>, <span id="pub_N">—</span>)</div>
       </div>
       <div class="key-card private">
-        <div class="key-label">개인키 · PRIVATE KEY</div>
-        <div class="key-val">(d, N) = (<span id="priv_d">—</span>, <span id="priv_N">3233</span>)</div>
+        <div class="key-label">개인키 (열쇠)</div>
+        <div class="key-val">(d, N) = (<span id="priv_d">—</span>, <span id="priv_N">—</span>)</div>
       </div>
     </div>
   </div>
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num">STEP 04</div>
+      <div class="step-num">단계 4</div>
       <div class="step-title">메시지를 암호화한다</div>
     </div>
-    <div class="step-desc">각 문자를 ASCII 코드 <span class="mono">m</span>으로 바꾸고, 공개키로 <span class="mono">c = m<sup>e</sup> mod N</span>을 계산한다. m이 N보다 작아야 하니, 학습용으로는 짧은 영문/숫자만 사용.</div>
+    <div class="step-desc">각 글자를 숫자로 바꾼 다음, 공개키로 잠근 새 숫자를 만든다. 받는 사람의 공개키만 있으면 누구나 잠글 수 있다.</div>
     <div class="row">
-      <label class="field" style="flex:1;min-width:240px">평문 (PLAINTEXT)
+      <label class="field" style="flex:1;min-width:240px">평문
         <input type="text" class="txt mono" id="plaintext" value="HELLO" maxlength="20" style="width:100%">
       </label>
-      <button class="btn" id="encrypt">🔒 암호화</button>
+      <button class="btn fill" id="encrypt">암호화</button>
     </div>
-    <div class="formula">c<sub>i</sub> = m<sub>i</sub><sup><b>e</b></sup> mod <b>N</b></div>
     <div class="out" id="encOut" style="display:none;margin-top:14px"></div>
   </div>
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num">STEP 05</div>
+      <div class="step-num">단계 5</div>
       <div class="step-title">메시지를 복호화한다</div>
     </div>
-    <div class="step-desc">암호문 <span class="mono">c</span>를 개인키로 다시 풀어낸다. <span class="mono">m = c<sup>d</sup> mod N</span>을 적용하면 원래 ASCII 코드가 나온다. 이게 바로 RSA의 마법.</div>
+    <div class="step-desc">개인키를 가진 사람만 잠긴 숫자를 원래 글자로 되돌릴 수 있다. 다른 사람은 N을 알아도 풀 수 없다.</div>
     <div class="row">
-      <button class="btn amber" id="decrypt">🔓 복호화</button>
+      <button class="btn fill" id="decrypt">복호화</button>
     </div>
-    <div class="formula">m<sub>i</sub> = c<sub>i</sub><sup><b class="amber">d</b></sup> mod <b>N</b></div>
     <div class="out" id="decOut" style="display:none;margin-top:14px"></div>
   </div>
 
 </section>
 
-<!-- ============== CHALLENGE ============== -->
-<section class="panel" id="challenge">
+<!-- ============== FACTOR GAME ============== -->
+<section class="panel" id="factor">
 
-  <div class="challenge-head">
-    <div class="stat"><div class="stat-label">남은 시간</div><div class="stat-val mint" id="timer">--:--</div></div>
+  <div class="step" style="margin-bottom:24px">
+    <div class="step-header">
+      <div class="step-num">왜 이 게임인가</div>
+      <div class="step-title">RSA의 안전은 이 문제에 달려 있다</div>
+    </div>
+    <div class="step-desc">두 소수를 곱하는 것은 쉽지만, 곱셈 결과만 보고 원래 두 소수를 알아내는 것은 어렵다. 이 비대칭성이 RSA를 지킨다. 직접 N을 받고 p와 q를 찾아 보자.</div>
+  </div>
+
+  <div class="game-head">
+    <div class="stat"><div class="stat-label">남은 시간</div><div class="stat-val" id="timer">--:--</div></div>
     <div class="stat"><div class="stat-label">점수</div><div class="stat-val" id="score">0</div></div>
-    <div class="stat"><div class="stat-label">평균 시간</div><div class="stat-val amber" id="avgTime">—</div></div>
+    <div class="stat"><div class="stat-label">평균 풀이 시간</div><div class="stat-val" id="avgTime">—</div></div>
     <div class="stat"><div class="stat-label">시도</div><div class="stat-val" id="attempts">0</div></div>
   </div>
 
   <div class="diff-picker">
-    <div class="diff active" data-diff="easy">쉬움 <small>2자리 소수 · 60초</small></div>
-    <div class="diff" data-diff="med">보통 <small>3자리 소수 · 120초</small></div>
-    <div class="diff" data-diff="hard">어려움 <small>4자리 소수 · 180초</small></div>
+    <div class="diff active" data-diff="easy">쉬움<small>두 자리 · 60초</small></div>
+    <div class="diff" data-diff="med">보통<small>세 자리 · 120초</small></div>
+    <div class="diff" data-diff="hard">어려움<small>네 자리 · 180초</small></div>
   </div>
 
   <div class="target-display">
-    <div class="target-label">다음 N을 두 소수의 곱으로 분해하라</div>
-    <div class="target-num mono" id="targetN">— · —</div>
-    <div class="target-formula">N = p × q · 둘 다 소수</div>
+    <div class="target-label">다음 수를 두 소수의 곱으로 나타내라</div>
+    <div class="target-num" id="targetN">— · —</div>
+    <div class="target-formula">N = p × q (둘 다 소수)</div>
   </div>
 
   <div class="factor-input">
-    <input type="text" class="txt mono" id="ans1" placeholder="P">
-    <input type="text" class="txt mono amber" id="ans2" placeholder="Q">
+    <input type="text" class="txt mono" id="ans1" placeholder="p">
+    <span class="x">×</span>
+    <input type="text" class="txt mono" id="ans2" placeholder="q">
   </div>
   <div class="row" style="justify-content:center;margin-bottom:6px">
-    <button class="btn" id="checkAns">확인</button>
-    <button class="btn amber" id="hintBtn">💡 힌트 (−5점)</button>
+    <button class="btn fill" id="checkAns">확인</button>
+    <button class="btn ghost" id="hintBtn">힌트 (−5점)</button>
     <button class="btn ghost" id="skipBtn">건너뛰기</button>
-    <button class="btn ghost" id="startBtn">▶ 게임 시작</button>
+    <button class="btn" id="startBtn">게임 시작</button>
   </div>
   <div class="feedback" id="feedback"></div>
 
   <div class="log-list">
-    <h4>기록 · ATTEMPT LOG</h4>
+    <h4>시도 기록</h4>
     <div id="logList"><div class="log-empty">아직 시도한 기록이 없다. 게임을 시작하면 여기에 쌓인다.</div></div>
   </div>
 
@@ -527,35 +589,35 @@ footer span{color:var(--text-2)}
   <div class="bench-grid">
     <div class="bench-card">
       <div class="bench-num mono" id="b2">—</div>
-      <div class="bench-label">2자리 소수의 곱 · N ≈ 10³</div>
-      <div class="bench-desc">사람이 종이로 1분 안에 분해 가능. 컴퓨터는 마이크로초.</div>
+      <div class="bench-label">두 자리 소수의 곱</div>
+      <div class="bench-desc">사람이 종이로도 금방 풀 수 있다. 컴퓨터는 거의 0초.</div>
     </div>
     <div class="bench-card">
       <div class="bench-num mono" id="b4">—</div>
-      <div class="bench-label">4자리 소수의 곱 · N ≈ 10⁷</div>
-      <div class="bench-desc">사람에겐 매우 어렵다. 컴퓨터는 여전히 한순간.</div>
+      <div class="bench-label">네 자리 소수의 곱</div>
+      <div class="bench-desc">사람에게는 매우 어렵다. 컴퓨터는 여전히 한순간에 끝낸다.</div>
     </div>
     <div class="bench-card">
-      <div class="bench-num mono amber" id="b6">—</div>
-      <div class="bench-label">6자리 소수의 곱 · N ≈ 10¹¹</div>
-      <div class="bench-desc">시행착오 분해는 비현실적. 컴퓨터도 √N 만큼 시도해야 한다.</div>
+      <div class="bench-num mono" id="b6">—</div>
+      <div class="bench-label">여섯 자리 소수의 곱</div>
+      <div class="bench-desc">사람이 직접 풀기는 사실상 불가능하다. 컴퓨터에게도 일이 늘어난다.</div>
     </div>
   </div>
 
   <div class="chart-wrap">
     <div class="chart-title">자릿수에 따른 인수분해 시간</div>
-    <div class="chart-sub">실측 벤치마크 · 단순 시행분할 √N 방식 · 로그 스케일</div>
-    <svg id="chart" viewBox="0 0 800 340" preserveAspectRatio="none"></svg>
+    <div class="chart-sub">자릿수가 커질수록 걸리는 시간이 가파르게 늘어난다</div>
+    <svg id="chart" viewBox="0 0 800 320" preserveAspectRatio="none"></svg>
   </div>
 
   <table class="compare">
-    <thead><tr><th>키 크기</th><th>N의 자릿수</th><th>최선의 알고리즘 추정 시간</th><th>실용성</th></tr></thead>
+    <thead><tr><th>키 크기</th><th>N의 자릿수</th><th>분해에 걸리는 시간</th><th>실용성</th></tr></thead>
     <tbody>
-      <tr><td>RSA-128</td><td class="mono">≈ 39자리</td><td class="mono">수 분</td><td class="danger">⨯ 깨짐</td></tr>
-      <tr><td>RSA-512</td><td class="mono">≈ 155자리</td><td class="mono">수 일 ~ 수 주</td><td class="danger">⨯ 깨짐 (1999년)</td></tr>
-      <tr><td>RSA-1024</td><td class="mono">≈ 309자리</td><td class="mono">수 년 (국가 자원 시)</td><td class="amber">△ 권장 안 함</td></tr>
-      <tr><td>RSA-2048</td><td class="mono">≈ 617자리</td><td class="mono">현재 슈퍼컴으로도 비현실적</td><td class="mint">○ 현재 표준</td></tr>
-      <tr><td>RSA-4096</td><td class="mono">≈ 1233자리</td><td class="mono">우주 나이의 수십억 배</td><td class="mint">○ 장기 안전</td></tr>
+      <tr><td>RSA-128</td><td class="mono">약 39자리</td><td class="mono">수 분</td><td>이미 깨짐</td></tr>
+      <tr><td>RSA-512</td><td class="mono">약 155자리</td><td class="mono">수 일 ~ 수 주</td><td>이미 깨짐 (1999)</td></tr>
+      <tr><td>RSA-1024</td><td class="mono">약 309자리</td><td class="mono">수 년 (국가급 자원)</td><td>권장하지 않음</td></tr>
+      <tr><td>RSA-2048</td><td class="mono">약 617자리</td><td class="mono">슈퍼컴으로도 비현실적</td><td>현재 표준</td></tr>
+      <tr><td>RSA-4096</td><td class="mono">약 1233자리</td><td class="mono">우주 나이의 수십억 배</td><td>장기 안전</td></tr>
     </tbody>
   </table>
 
@@ -566,50 +628,45 @@ footer span{color:var(--text-2)}
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num">FAQ</div>
-      <div class="step-title">양자 컴퓨터가 나오면 RSA는 끝인가?</div>
+      <div class="step-num">질문</div>
+      <div class="step-title">양자 컴퓨터가 나오면 RSA는 끝인가</div>
     </div>
-    <div class="step-desc">결론부터 말하면 <span style="color:var(--danger)">그렇다</span>. 하지만 그 전에 준비는 이미 시작되었다.</div>
+    <div class="step-desc">결론부터 말하면 그렇다. 다만 그 전에 대비는 이미 시작되고 있다.</div>
   </div>
 
   <div class="q-grid">
     <div class="q-card">
       <h3>쇼어 알고리즘</h3>
       <div>
-        <span class="tag mint">1994</span>
-        <span class="tag amber">Peter Shor</span>
-        <span class="tag danger">RSA-Killer</span>
+        <span class="tag">1994</span>
+        <span class="tag">피터 쇼어</span>
       </div>
-      <p>피터 쇼어가 1994년에 제안한 알고리즘. 큰 수의 인수분해를 <span class="mono" style="color:var(--mint)">다항 시간</span>에 해낼 수 있다. 핵심은 두 가지:</p>
-      <p><b style="color:var(--mint)">① 주기 찾기</b><br>인수분해 문제를 <span class="mono">a<sup>x</sup> mod N</span>이라는 함수의 주기를 찾는 문제로 바꾼다.</p>
-      <p><b style="color:var(--mint)">② 양자 푸리에 변환 (QFT)</b><br>주기를 찾는 작업을 양자 중첩과 푸리에 변환으로 한 번에 처리. 고전 컴퓨터로는 √N만큼 시도해야 하던 일을 양자 컴퓨터는 log²N으로 끝낸다.</p>
-      <p style="color:var(--text-3);font-size:12px;margin-top:14px">단, RSA-2048을 깨려면 약 <span class="mono">2,000만 큐비트</span> 수준이 필요하다는 추정. 2026년 기준 가장 큰 IBM 양자칩이 1,000큐비트대 — 아직 갈 길이 멀다.</p>
+      <p>피터 쇼어가 1994년에 제안한 방법. 일반 컴퓨터는 큰 N을 두 소수로 쪼개는 데 엄청난 시간이 걸리지만, 양자 컴퓨터는 같은 일을 매우 짧은 시간에 끝낼 수 있다.</p>
+      <p>다시 말해, 지금까지 RSA를 안전하게 지켜 주던 “소인수분해가 어렵다”는 전제가 무너진다.</p>
+      <p style="color:var(--ink-3);font-size:12px;margin-top:14px">단, 실제로 RSA-2048을 깨려면 매우 큰 양자 컴퓨터가 필요하다. 2026년 기준 가장 큰 양자칩도 그 규모에는 한참 못 미치기 때문에 아직 갈 길이 멀다.</p>
     </div>
 
     <div class="q-card">
-      <h3>포스트 양자 암호 (PQC)</h3>
+      <h3>양자 내성 암호</h3>
       <div>
-        <span class="tag mint">NIST 2024</span>
-        <span class="tag mint">표준화 완료</span>
+        <span class="tag">NIST 2024</span>
+        <span class="tag">표준화 완료</span>
       </div>
-      <p>양자 컴퓨터가 풀 수 없는 수학 문제로 만든 새 암호. 미국 NIST가 2024년 8월 첫 표준 3종을 확정했다.</p>
-      <p><b style="color:var(--mint)">ML-KEM (Kyber)</b> · 키 교환용. 격자 위 최단 벡터 문제 기반.</p>
-      <p><b style="color:var(--mint)">ML-DSA (Dilithium)</b> · 디지털 서명용. 격자 기반.</p>
-      <p><b style="color:var(--mint)">SLH-DSA (SPHINCS+)</b> · 해시 기반 서명. 보수적·안전.</p>
-      <p style="color:var(--text-3);font-size:12px;margin-top:14px">애플은 이미 2024년 iMessage에 PQ3 프로토콜을 적용. 구글·시그널·Cloudflare도 채택 진행 중. RSA에서 PQC로의 전환은 향후 5~10년에 걸쳐 점진적으로 이뤄질 전망.</p>
+      <p>양자 컴퓨터가 풀기 어려운 새로운 종류의 수학 문제를 활용해 만든 암호. 미국 NIST가 2024년 8월에 첫 표준 세 가지를 확정했다.</p>
+      <p>이름이 어렵지만 핵심은 “양자 컴퓨터가 나와도 안전한 다른 자물쇠를 미리 만들어 두자”는 것이다.</p>
+      <p style="color:var(--ink-3);font-size:12px;margin-top:14px">애플은 이미 2024년 메시지 앱에 새 방식을 적용했고, 구글과 시그널, 클라우드플레어도 도입을 진행 중이다. RSA에서 양자 내성 암호로의 전환은 앞으로 5~10년에 걸쳐 천천히 이루어질 전망이다.</p>
     </div>
   </div>
 
-  <div class="step" style="margin-top:24px">
+  <div class="step" style="margin-top:20px">
     <div class="step-header">
-      <div class="step-num">⚠</div>
-      <div class="step-title">"지금 수확, 나중에 해독" 위협</div>
+      <div class="step-num">주의</div>
+      <div class="step-title">지금 수확, 나중에 해독</div>
     </div>
-    <div class="step-desc">국가급 공격자는 <b style="color:var(--amber)">오늘 암호화된 통신을 그대로 저장</b>해두고, 양자 컴퓨터가 실용화될 때 한꺼번에 복호화하려 한다. 의료 기록·국가 기밀처럼 수십 년 지나도 가치 있는 데이터는 <b style="color:var(--mint)">지금 당장</b> PQC로 옮기는 게 안전하다.</div>
+    <div class="step-desc">국가급 공격자는 <b>오늘 암호화된 통신을 그대로 저장</b>해 두고, 양자 컴퓨터가 실용화될 때 한꺼번에 복호화하려 한다. 의료 기록이나 국가 기밀처럼 수십 년이 지나도 가치 있는 데이터는 지금 당장 양자 내성 암호로 옮기는 것이 안전하다.</div>
   </div>
 
 </section>
-
 
 </div>
 
@@ -636,7 +693,6 @@ function gcd(a, b) {
   return a;
 }
 
-// extended euclidean: returns [g, x, y] s.t. a*x + b*y = g
 function egcd(a, b) {
   if (b === 0n) return [a, 1n, 0n];
   const [g, x1, y1] = egcd(b, a % b);
@@ -665,14 +721,12 @@ function isPrime(n) {
 // ============================================
 const tabs = document.querySelectorAll('.tab');
 const panels = document.querySelectorAll('.panel');
-const modeIndicator = document.getElementById('modeIndicator');
 tabs.forEach(t => {
   t.addEventListener('click', () => {
     tabs.forEach(x => x.classList.remove('active'));
     panels.forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     document.getElementById(t.dataset.tab).classList.add('active');
-    modeIndicator.textContent = {learn:'LEARN', challenge:'CHALLENGE', data:'DATA', quantum:'QUANTUM'}[t.dataset.tab];
     if (t.dataset.tab === 'data') drawChart();
   });
 });
@@ -682,42 +736,46 @@ tabs.forEach(t => {
 // ============================================
 const $p = document.getElementById('p');
 const $q = document.getElementById('q');
-const $e = document.getElementById('e');
 const $N_formula = document.getElementById('N_formula');
-const $phi_formula = document.getElementById('phi_formula');
 
 let state = { N:0n, phi:0n, e:0n, d:0n, cipher:[], message:'' };
 
-function updateNPhi() {
+function pickE(phi) {
+  const candidates = [3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n, 41n, 43n, 47n, 53n, 59n, 61n, 65537n];
+  for (const c of candidates) {
+    if (c < phi && gcd(c, phi) === 1n) return c;
+  }
+  return null;
+}
+
+function updateN() {
   const p = BI($p.value || 0);
   const q = BI($q.value || 0);
   const okP = isPrime(p);
   const okQ = isPrime(q);
   if (!okP || !okQ) {
-    $N_formula.innerHTML = `<span style="color:var(--danger)">${okP?'':'p가 소수가 아님 '}${okQ?'':'q가 소수가 아님'}</span>`;
-    $phi_formula.innerHTML = '—';
+    $N_formula.innerHTML = `<span style="color:var(--ink-3)">${okP?'':'p가 소수가 아님 '}${okQ?'':'q가 소수가 아님'}</span>`;
     state.N = 0n; state.phi = 0n;
     return false;
   }
   if (p === q) {
-    $N_formula.innerHTML = `<span style="color:var(--danger)">p와 q는 서로 달라야 함</span>`;
+    $N_formula.innerHTML = `<span style="color:var(--ink-3)">p와 q는 서로 달라야 함</span>`;
     return false;
   }
   state.N = p * q;
   state.phi = (p - 1n) * (q - 1n);
   $N_formula.textContent = `${p} × ${q} = ${state.N}`;
-  $phi_formula.textContent = `${p - 1n} × ${q - 1n} = ${state.phi}`;
   return true;
 }
 
-$p.addEventListener('input', updateNPhi);
-$q.addEventListener('input', updateNPhi);
+$p.addEventListener('input', updateN);
+$q.addEventListener('input', updateN);
 
 document.querySelectorAll('.chip').forEach(c => {
   c.addEventListener('click', () => {
     const [a, b] = c.dataset.pq.split(',');
     $p.value = a; $q.value = b;
-    updateNPhi();
+    updateN();
   });
 });
 
@@ -730,25 +788,13 @@ document.getElementById('randomPrimes').addEventListener('click', () => {
     b = smallPrimes[Math.floor(Math.random() * smallPrimes.length)];
   } while (a === b || a * b < 2000);
   $p.value = a; $q.value = b;
-  updateNPhi();
-});
-
-document.getElementById('autoE').addEventListener('click', () => {
-  if (!updateNPhi()) return;
-  const candidates = [3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n, 41n, 43n, 47n, 53n, 59n, 61n, 65537n];
-  for (const c of candidates) {
-    if (c < state.phi && gcd(c, state.phi) === 1n) {
-      $e.value = c.toString();
-      return;
-    }
-  }
+  updateN();
 });
 
 document.getElementById('genKeys').addEventListener('click', () => {
-  if (!updateNPhi()) { alert('p와 q가 유효한 서로 다른 소수여야 합니다.'); return; }
-  const e = BI($e.value || 0);
-  if (e <= 1n || e >= state.phi) { alert('e는 1 < e < φ(N) 범위여야 합니다.'); return; }
-  if (gcd(e, state.phi) !== 1n) { alert('gcd(e, φ(N)) ≠ 1 입니다. 다른 e를 선택하세요. (자동 추천 사용 가능)'); return; }
+  if (!updateN()) { alert('p와 q가 유효한 서로 다른 소수여야 한다.'); return; }
+  const e = pickE(state.phi);
+  if (!e) { alert('적절한 키를 찾지 못했다. 다른 소수를 골라 보자.'); return; }
   state.e = e;
   state.d = modInverse(e, state.phi);
   document.getElementById('pub_e').textContent = state.e;
@@ -759,51 +805,50 @@ document.getElementById('genKeys').addEventListener('click', () => {
 });
 
 document.getElementById('encrypt').addEventListener('click', () => {
-  if (!state.e || !state.d) { alert('먼저 키를 생성하세요.'); return; }
+  if (!state.e || !state.d) { alert('먼저 키를 생성하자.'); return; }
   const text = document.getElementById('plaintext').value;
-  if (!text) { alert('평문을 입력하세요.'); return; }
+  if (!text) { alert('평문을 입력하자.'); return; }
   const cipher = [];
   const lines = [];
   for (const ch of text) {
     const m = BI(ch.charCodeAt(0));
-    if (m >= state.N) { alert(`'${ch}'의 ASCII(${m})가 N(${state.N})보다 큽니다. 더 큰 소수를 사용하세요.`); return; }
+    if (m >= state.N) { alert(`'${ch}'의 숫자 값(${m})이 N(${state.N})보다 크다. 더 큰 소수를 사용하자.`); return; }
     const c = modpow(m, state.e, state.N);
     cipher.push(c);
-    lines.push(`'${ch}' → m=${m} → c = ${m}^${state.e} mod ${state.N} = <span class="v">${c}</span>`);
+    lines.push(`'${ch}' → 숫자 ${m} → 잠긴 숫자 <span class="v">${c}</span>`);
   }
   state.cipher = cipher;
   state.message = text;
   document.getElementById('encOut').innerHTML =
     `<span class="k">평문 :</span> "${text}"\n<span class="k">길이 :</span> ${text.length} 글자\n\n` +
     lines.join('\n') +
-    `\n\n<span class="k">암호문 (ciphertext):</span>\n[ <span class="v">${cipher.join(', ')}</span> ]`;
+    `\n\n<span class="k">암호문:</span>\n[ <span class="v">${cipher.join(', ')}</span> ]`;
   document.getElementById('encOut').style.display = '';
 });
 
 document.getElementById('decrypt').addEventListener('click', () => {
-  if (!state.cipher.length) { alert('먼저 암호화를 수행하세요.'); return; }
+  if (!state.cipher.length) { alert('먼저 암호화를 수행하자.'); return; }
   const lines = [];
   let recovered = '';
   for (const c of state.cipher) {
     const m = modpow(c, state.d, state.N);
     const ch = String.fromCharCode(Number(m));
     recovered += ch;
-    lines.push(`c=${c} → m = ${c}^${state.d} mod ${state.N} = ${m} → <span class="v amber">'${ch}'</span>`);
+    lines.push(`잠긴 숫자 ${c} → 원래 숫자 ${m} → <span class="v">'${ch}'</span>`);
   }
   const ok = recovered === state.message;
   document.getElementById('decOut').innerHTML =
     `<span class="k">암호문 :</span> [${state.cipher.join(', ')}]\n\n` +
     lines.join('\n') +
-    `\n\n<span class="k">복호화 결과:</span> "<span class="v amber">${recovered}</span>" ` +
-    `${ok ? '<span class="v">✓ 원본과 일치</span>' : '<span style="color:var(--danger)">✗ 불일치</span>'}`;
+    `\n\n<span class="k">복호화 결과:</span> "<span class="v">${recovered}</span>" ` +
+    `${ok ? '<span class="v">· 원본과 일치</span>' : '<span style="color:var(--ink-3)">· 불일치</span>'}`;
   document.getElementById('decOut').style.display = '';
 });
 
-// init
-updateNPhi();
+updateN();
 
 // ============================================
-//  CHALLENGE MODE
+//  FACTOR GAME
 // ============================================
 const diffSettings = {
   easy: { range: [11, 99], time: 60, points: 10, label: '쉬움' },
@@ -823,7 +868,7 @@ document.querySelectorAll('.diff').forEach(d => {
     document.querySelectorAll('.diff').forEach(x => x.classList.remove('active'));
     d.classList.add('active');
     challenge.diff = d.dataset.diff;
-    if (challenge.running) endGame('난이도가 변경되어 게임이 종료된다.');
+    if (challenge.running) endGame('난이도가 바뀌어 게임이 종료되었다.');
   });
 });
 
@@ -860,14 +905,14 @@ function startGame() {
   document.getElementById('avgTime').textContent = '—';
   document.getElementById('attempts').textContent = '0';
   document.getElementById('logList').innerHTML = '';
-  document.getElementById('startBtn').textContent = '■ 게임 중지';
+  document.getElementById('startBtn').textContent = '게임 중지';
   nextProblem();
   challenge.timerId = setInterval(() => {
     challenge.timeLeft--;
     const m = Math.floor(challenge.timeLeft / 60);
     const s = challenge.timeLeft % 60;
     document.getElementById('timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    if (challenge.timeLeft <= 0) endGame('시간 종료. 잘 풀었다.');
+    if (challenge.timeLeft <= 0) endGame('시간이 종료되었다. 잘 풀었다.');
   }, 1000);
   const m = Math.floor(challenge.timeLeft / 60);
   const s = challenge.timeLeft % 60;
@@ -877,11 +922,11 @@ function startGame() {
 function endGame(reason) {
   challenge.running = false;
   clearInterval(challenge.timerId);
-  document.getElementById('startBtn').textContent = '▶ 게임 시작';
+  document.getElementById('startBtn').textContent = '게임 시작';
   document.getElementById('targetN').textContent = '— · —';
   const fb = document.getElementById('feedback');
-  const avg = challenge.attempts ? (challenge.totalTime / challenge.attempts).toFixed(1) + 's' : '—';
-  fb.textContent = `${reason} 최종 점수 ${challenge.score} · 풀이 ${challenge.attempts}개 · 평균 ${avg}`;
+  const avg = challenge.attempts ? (challenge.totalTime / challenge.attempts).toFixed(1) + '초' : '—';
+  fb.textContent = `${reason} 최종 ${challenge.score}점 · 풀이 ${challenge.attempts}개 · 평균 ${avg}`;
   fb.className = 'feedback ok';
 }
 
@@ -891,11 +936,15 @@ document.getElementById('startBtn').addEventListener('click', () => {
 });
 
 document.getElementById('checkAns').addEventListener('click', () => {
-  if (!challenge.running) { document.getElementById('feedback').textContent = '먼저 게임 시작 버튼을 누르자.'; document.getElementById('feedback').className = 'feedback hint'; return; }
+  if (!challenge.running) {
+    document.getElementById('feedback').textContent = '먼저 게임 시작 버튼을 누르자.';
+    document.getElementById('feedback').className = 'feedback hint';
+    return;
+  }
   const a = parseInt(document.getElementById('ans1').value);
   const b = parseInt(document.getElementById('ans2').value);
   if (!a || !b) {
-    document.getElementById('feedback').textContent = '두 칸에 모두 입력하라.';
+    document.getElementById('feedback').textContent = '두 칸에 모두 입력하자.';
     document.getElementById('feedback').className = 'feedback bad';
     return;
   }
@@ -906,15 +955,16 @@ document.getElementById('checkAns').addEventListener('click', () => {
     const pts = diffSettings[challenge.diff].points - (challenge.hintUsed ? 5 : 0);
     challenge.score += pts;
     challenge.totalTime += elapsed;
-    document.getElementById('feedback').textContent = `✓ 정답! +${pts}점 (${elapsed.toFixed(1)}s)`;
+    document.getElementById('feedback').textContent = `정답. +${pts}점 (${elapsed.toFixed(1)}초)`;
     document.getElementById('feedback').className = 'feedback ok';
-    addLog(challenge.target, `${challenge.p} × ${challenge.q}`, elapsed.toFixed(1) + 's', 'success', `+${pts}`);
+    addLog(challenge.target, `${challenge.p} × ${challenge.q}`, elapsed.toFixed(1) + '초', 'success', `+${pts}`);
     document.getElementById('score').textContent = challenge.score;
     document.getElementById('attempts').textContent = challenge.attempts;
-    document.getElementById('avgTime').textContent = (challenge.totalTime / challenge.attempts).toFixed(1) + 's';
+    document.getElementById('avgTime').textContent = (challenge.totalTime / challenge.attempts).toFixed(1) + '초';
     setTimeout(() => challenge.running && nextProblem(), 700);
   } else {
-    document.getElementById('feedback').textContent = `✗ 틀렸다. ${a}×${b}=${a*b} ${a*b!==challenge.target?'(N과 다름)':'(소수가 아님)'}`;
+    const reason = a * b !== challenge.target ? 'N과 다름' : '소수가 아님';
+    document.getElementById('feedback').textContent = `틀렸다. ${a} × ${b} = ${a*b} (${reason})`;
     document.getElementById('feedback').className = 'feedback bad';
   }
 });
@@ -923,23 +973,23 @@ document.getElementById('hintBtn').addEventListener('click', () => {
   if (!challenge.running) return;
   const a = parseInt(document.getElementById('ans1').value);
   if (!a) {
-    document.getElementById('feedback').textContent = '힌트: P 칸에 추측 숫자를 적고 누르면 나누어떨어지는지 알려준다.';
+    document.getElementById('feedback').textContent = '힌트 사용법: p 칸에 추측 숫자를 적고 누르면 나누어떨어지는지 알려준다.';
     document.getElementById('feedback').className = 'feedback hint';
     return;
   }
   challenge.hintUsed = true;
   if (challenge.target % a === 0) {
-    document.getElementById('feedback').textContent = `💡 ${a}는 N을 나눈다 → ${challenge.target}/${a} = ${challenge.target/a}`;
+    document.getElementById('feedback').textContent = `${a}는 N을 나눈다. ${challenge.target} ÷ ${a} = ${challenge.target/a}`;
     document.getElementById('feedback').className = 'feedback hint';
   } else {
-    document.getElementById('feedback').textContent = `💡 ${a}는 N을 나누지 않는다. (나머지 ${challenge.target % a})`;
+    document.getElementById('feedback').textContent = `${a}는 N을 나누지 않는다. (나머지 ${challenge.target % a})`;
     document.getElementById('feedback').className = 'feedback hint';
   }
 });
 
 document.getElementById('skipBtn').addEventListener('click', () => {
   if (!challenge.running) return;
-  addLog(challenge.target, `정답: ${challenge.p} × ${challenge.q}`, '—', 'fail', 'SKIP');
+  addLog(challenge.target, `정답은 ${challenge.p} × ${challenge.q}`, '—', 'fail', '건너뜀');
   nextProblem();
 });
 
@@ -967,11 +1017,8 @@ function trialFactor(n) {
 }
 
 function benchmark(digits) {
-  // 자릿수가 d인 두 소수의 곱을 만들어 분해 시간 측정
-  // 너무 큰 자릿수는 페이지가 멈출 수 있어 상한 둠
   const lo = 10 ** (digits - 1);
   const hi = 10 ** digits;
-  // 두 소수 찾기
   let p, q;
   for (let tries = 0; tries < 50; tries++) {
     const cp = lo + Math.floor(Math.random() * (hi - lo));
@@ -992,12 +1039,10 @@ function benchmark(digits) {
 let benchData = [];
 function runBenchmarks() {
   benchData = [];
-  // 자릿수 2~7 정도까지만 (8자리 이상은 페이지가 매우 느려짐)
   for (let d = 2; d <= 7; d++) {
     const r = benchmark(d);
     if (r) benchData.push({ digits: d, ...r });
   }
-  // 카드 업데이트
   const b2 = benchData.find(x => x.digits === 2);
   const b4 = benchData.find(x => x.digits === 4);
   const b6 = benchData.find(x => x.digits === 6);
@@ -1015,7 +1060,7 @@ function formatMs(ms) {
 function drawChart() {
   if (!benchData.length) runBenchmarks();
   const svg = document.getElementById('chart');
-  const W = 800, H = 340, padL = 64, padR = 30, padT = 24, padB = 50;
+  const W = 800, H = 320, padL = 70, padR = 30, padT = 20, padB = 50;
   const data = benchData;
   if (!data.length) return;
   const xs = data.map(d => d.digits);
@@ -1027,39 +1072,27 @@ function drawChart() {
   const y = v => padT + (1 - (Math.log10(v) - yMin) / (yMax - yMin)) * (H - padT - padB);
 
   let html = '';
-  // 그리드 + Y축 라벨
   const yTicks = [];
   for (let p = Math.floor(yMin); p <= Math.ceil(yMax); p++) yTicks.push(Math.pow(10, p));
   for (const t of yTicks) {
     const yy = y(t);
-    html += `<line x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}" stroke="rgba(26,24,20,0.07)" stroke-width="1"/>`;
-    html += `<text x="${padL-10}" y="${yy+4}" fill="#8a8576" font-family="JetBrains Mono" font-size="10" text-anchor="end">${formatMs(t)}</text>`;
+    html += `<line x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}" stroke="rgba(28,27,24,0.06)" stroke-width="1"/>`;
+    html += `<text x="${padL-10}" y="${yy+4}" fill="#8d8a7e" font-family="JetBrains Mono" font-size="10" text-anchor="end">${formatMs(t)}</text>`;
   }
-  // X축 라벨
   for (const xi of xs) {
     const xx = x(xi);
-    html += `<line x1="${xx}" x2="${xx}" y1="${padT}" y2="${H-padB}" stroke="rgba(26,24,20,0.04)" stroke-width="1"/>`;
-    html += `<text x="${xx}" y="${H-padB+20}" fill="#5a564c" font-family="JetBrains Mono" font-size="11" text-anchor="middle">${xi}자리</text>`;
+    html += `<text x="${xx}" y="${H-padB+20}" fill="#56544c" font-family="JetBrains Mono" font-size="11" text-anchor="middle">${xi}자리</text>`;
   }
-  // 축
-  html += `<line x1="${padL}" x2="${W-padR}" y1="${H-padB}" y2="${H-padB}" stroke="#b8ad94"/>`;
-  html += `<line x1="${padL}" x2="${padL}" y1="${padT}" y2="${H-padB}" stroke="#b8ad94"/>`;
-  // 라인
+  html += `<line x1="${padL}" x2="${W-padR}" y1="${H-padB}" y2="${H-padB}" stroke="#b6b1a3"/>`;
+  html += `<line x1="${padL}" x2="${padL}" y1="${padT}" y2="${H-padB}" stroke="#b6b1a3"/>`;
   const pathD = data.map((d, i) => `${i ? 'L' : 'M'} ${x(d.digits)} ${y(d.ms)}`).join(' ');
-  html += `<path d="${pathD}" stroke="#0d7d6a" stroke-width="2" fill="none"/>`;
-  // 면적
-  const areaD = pathD + ` L ${x(xs[xs.length-1])} ${H-padB} L ${x(xs[0])} ${H-padB} Z`;
-  html += `<path d="${areaD}" fill="url(#grad)" opacity="0.5"/>`;
-  // 점
+  html += `<path d="${pathD}" stroke="#1c1b18" stroke-width="1.5" fill="none"/>`;
   for (const d of data) {
-    html += `<circle cx="${x(d.digits)}" cy="${y(d.ms)}" r="4" fill="#fbf8f1" stroke="#0d7d6a" stroke-width="2"/>`;
-    html += `<text x="${x(d.digits)}" y="${y(d.ms)-12}" fill="#0d7d6a" font-family="JetBrains Mono" font-size="10" text-anchor="middle">${formatMs(d.ms)}</text>`;
+    html += `<circle cx="${x(d.digits)}" cy="${y(d.ms)}" r="3.5" fill="#fbfaf6" stroke="#1c1b18" stroke-width="1.5"/>`;
+    html += `<text x="${x(d.digits)}" y="${y(d.ms)-12}" fill="#1c1b18" font-family="JetBrains Mono" font-size="10" text-anchor="middle">${formatMs(d.ms)}</text>`;
   }
-  // gradient
-  html = `<defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d7d6a" stop-opacity="0.35"/><stop offset="100%" stop-color="#0d7d6a" stop-opacity="0"/></linearGradient></defs>` + html;
-  // 축 라벨
-  html += `<text x="${W/2}" y="${H-12}" fill="#8a8576" font-family="JetBrains Mono" font-size="11" text-anchor="middle">소수의 자릿수 →</text>`;
-  html += `<text x="20" y="${padT+8}" fill="#8a8576" font-family="JetBrains Mono" font-size="11">시간 (log)</text>`;
+  html += `<text x="${W/2}" y="${H-10}" fill="#8d8a7e" font-family="JetBrains Mono" font-size="11" text-anchor="middle">소수의 자릿수</text>`;
+  html += `<text x="16" y="${padT+8}" fill="#8d8a7e" font-family="JetBrains Mono" font-size="11">시간 (로그)</text>`;
 
   svg.innerHTML = html;
 }
